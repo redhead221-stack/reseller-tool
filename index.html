@@ -273,7 +273,7 @@
             }
         }
 
-       // Heavy DB Aggregator and Dynamic Mobile Responsive Card Renderer
+      // Heavy DB Aggregator and Dynamic Mobile Responsive Card Renderer
         async function loadLots(estateId) {
             const { data: lots, error: lotErr } = await supabase
                 .from('lots')
@@ -303,22 +303,27 @@
                         // Check if this item is currently collapsed
                         const isCollapsed = collapsedNotesState[item.id] === true;
                         const hiddenClass = isCollapsed ? 'hidden' : '';
-                        const buttonText = isCollapsed ? '👁️ Show Checklist' : '🙈 Hide Checklist';
+                        const buttonText = isCollapsed ? '👁️ Show' : '🙈 Hide';
                         
                         return `
                         <!-- Item Card with Double Responsive Layouts! -->
-                        <div class="border-b last:border-b-0 pb-4 mb-4 last:mb-0 last:pb-0">
+                        <div class="border-b last:border-b-0 pb-4 mb-4 last:mb-0 last:pb-0" id="item-card-${item.id}">
                             <div class="flex justify-between items-start gap-4">
                                 <div class="flex-1">
                                     <div class="flex items-center gap-2 flex-wrap">
-    <h5 class="font-bold text-brand-primary text-base">${item.name}</h5>
-    ${item.ai_model ? `<span class="text-[10px] bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full font-sans font-semibold border">🤖 ${item.ai_model}</span>` : ''}
-</div>
+                                        <h5 class="font-bold text-brand-primary text-base">${item.name}</h5>
+                                        ${item.ai_model ? `<span class="text-[10px] bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full font-sans font-semibold border">🤖 ${item.ai_model}</span>` : ''}
+                                    </div>
                                     
-                                    <!-- Compact Toggle Button -->
-                                    <button onclick="toggleNotes('${item.id}')" id="toggle-btn-${item.id}" class="text-xs text-brand-gold hover:text-brand-primary font-semibold mt-1.5 flex items-center gap-1 bg-amber-50/50 border border-amber-200/60 px-2.5 py-1 rounded-md transition-all">
-                                        ${buttonText}
-                                    </button>
+                                    <!-- Compact Toggle & Delete Buttons Row -->
+                                    <div class="flex items-center gap-2 mt-1.5">
+                                        <button onclick="toggleNotes('${item.id}')" id="toggle-btn-${item.id}" class="text-xs text-brand-gold hover:text-brand-primary font-semibold flex items-center gap-1 bg-amber-50/50 border border-amber-200/60 px-2.5 py-1 rounded-md transition-all">
+                                            ${buttonText} Checklist
+                                        </button>
+                                        <button onclick="deleteItem('${item.id}', '${item.name.replace(/'/g, "\\'")}')" class="text-xs text-red-600 hover:bg-red-50 hover:text-red-800 font-semibold flex items-center gap-1 bg-red-50/40 border border-red-200/40 px-2.5 py-1 rounded-md transition-all">
+                                            🗑️ Delete
+                                        </button>
+                                    </div>
                                     
                                     <!-- Field/Mobile Mode (Collapsed details, large text notes) -->
                                     <div id="mobile-notes-${item.id}" class="${hiddenClass} md:hidden mt-3 text-sm text-gray-700 font-mono bg-brand-bg border border-amber-100 rounded-md p-3">
@@ -455,6 +460,30 @@
                 if (mobileNotes) mobileNotes.classList.remove('hidden');
                 if (desktopNotes) desktopNotes.classList.remove('hidden');
                 if (btn) btn.innerHTML = '🙈 Hide Checklist';
+            }
+        }
+        // Delete an item from Supabase with instant UI sync
+        async function deleteItem(itemId, itemName) {
+            // Native mobile safety confirmation prompt
+            if (!confirm(`Are you sure you want to delete "${itemName}"?`)) {
+                return;
+            }
+
+            try {
+                const { error } = await supabase
+                    .from('items')
+                    .delete()
+                    .eq('id', itemId);
+
+                if (!error) {
+                    // Instantly reload lots to update UI
+                    await loadLots(currentEstateId);
+                } else {
+                    alert("Delete failed: " + error.message);
+                }
+            } catch (err) {
+                console.error("Error deleting item:", err);
+                alert("An unexpected error occurred while deleting.");
             }
         }
         // Robust JSON Clipboard Parser: Turns Claude's unstructured prompt data into aligned Postgres rows
