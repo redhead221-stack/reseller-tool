@@ -310,7 +310,10 @@
                         <div class="border-b last:border-b-0 pb-4 mb-4 last:mb-0 last:pb-0">
                             <div class="flex justify-between items-start gap-4">
                                 <div class="flex-1">
-                                    <h5 class="font-bold text-brand-primary text-base">${item.name}</h5>
+                                    <div class="flex items-center gap-2 flex-wrap">
+    <h5 class="font-bold text-brand-primary text-base">${item.name}</h5>
+    ${item.ai_model ? `<span class="text-[10px] bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full font-sans font-semibold border">🤖 ${item.ai_model}</span>` : ''}
+</div>
                                     
                                     <!-- Compact Toggle Button -->
                                     <button onclick="toggleNotes('${item.id}')" id="toggle-btn-${item.id}" class="text-xs text-brand-gold hover:text-brand-primary font-semibold mt-1.5 flex items-center gap-1 bg-amber-50/50 border border-amber-200/60 px-2.5 py-1 rounded-md transition-all">
@@ -467,7 +470,7 @@
                     return alert("Data format error: Make sure you copied Claude's raw JSON array.");
                 }
 
-                // Push all rows directly to database via Supabase
+               // Push all rows directly to database via Supabase
                 const rowsToInsert = itemsArray.map(item => ({
                     lot_id: lotId,
                     name: item.name || item.title || "Unknown Item",
@@ -476,7 +479,8 @@
                     resale_estimate: item.resale_estimate || "$0",
                     confidence: parseInt(item.confidence) || 55,
                     sell_speed: item.sell_speed || "Slow",
-                    notes: item.notes || ""
+                    notes: item.notes || "",
+                    ai_model: item.ai_model || "Unknown AI" // <-- ADD THIS LINE
                 }));
 
                 const { error } = await supabase
