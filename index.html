@@ -436,7 +436,25 @@
             document.getElementById(`paid-${id}`).value = numericValue;
             await updateField(id, 'paid', numericValue);
         }
-
+// Toggle notes open or collapsed dynamically
+        function toggleNotes(itemId) {
+            // Flip the collapsed state
+            collapsedNotesState[itemId] = !collapsedNotesState[itemId];
+            
+            const mobileNotes = document.getElementById(`mobile-notes-${itemId}`);
+            const desktopNotes = document.getElementById(`desktop-notes-${itemId}`);
+            const btn = document.getElementById(`toggle-btn-${itemId}`);
+            
+            if (collapsedNotesState[itemId]) {
+                if (mobileNotes) mobileNotes.classList.add('hidden');
+                if (desktopNotes) desktopNotes.classList.add('hidden');
+                if (btn) btn.innerHTML = '👁️ Show Checklist';
+            } else {
+                if (mobileNotes) mobileNotes.classList.remove('hidden');
+                if (desktopNotes) desktopNotes.classList.remove('hidden');
+                if (btn) btn.innerHTML = '🙈 Hide Checklist';
+            }
+        }
         // Robust JSON Clipboard Parser: Turns Claude's unstructured prompt data into aligned Postgres rows
         async function triggerPaste(lotId) {
             try {
