@@ -116,6 +116,7 @@
     <script>
         let currentEstateId = null;
         let selectedFile = null;
+         let collapsedNotesState = {};
 
         // On Load: Read data from cache first, then sync from Supabase
         window.addEventListener('DOMContentLoaded', async () => {
@@ -298,63 +299,76 @@
 
                 let itemsListHTML = '';
                 if (items && items.length > 0) {
-                    itemsListHTML = items.map(item => `
+                     let itemsListHTML = '';
+                if (items && items.length > 0) {
+                    itemsListHTML = items.map(item => {
+                        // Check if this item is currently collapsed
+                        const isCollapsed = collapsedNotesState[item.id] === true;
+                        const hiddenClass = isCollapsed ? 'hidden' : '';
+                        const buttonText = isCollapsed ? '👁️ Show Checklist' : '🙈 Hide Checklist';
+                        
+                        return `
                         <!-- Item Card with Double Responsive Layouts! -->
                         <div class="border-b last:border-b-0 pb-4 mb-4 last:mb-0 last:pb-0">
                             <div class="flex justify-between items-start gap-4">
                                 <div class="flex-1">
                                     <h5 class="font-bold text-brand-primary text-base">${item.name}</h5>
-
-                                   <!-- Field/Mobile Mode (Collapsed details, large text notes) Updated 08/27/2026 -->
-    <div class="md:hidden mt-2 text-sm text-gray-700 font-mono bg-brand-bg border border-amber-100 rounded-md p-3">
-    <!-- Compact Mobile Metrics Row -->
-    <div class="flex justify-between border-b border-amber-200/60 pb-2 mb-2 text-xs font-sans">
-        <div>
-            <span class="text-gray-500 uppercase font-semibold">Est Resale:</span>
-            <span class="text-brand-primary font-bold ml-1">${item.resale_estimate || 'N/A'}</span>
-        </div>
-        <div>
-            <span class="text-gray-500 uppercase font-semibold">Confidence:</span>
-            <span class="text-brand-primary font-bold ml-1">${item.confidence || '55'}%</span>
-        </div>
-    </div>
-    
-    <p class="font-bold text-amber-800 text-xs uppercase mb-1">Field Checklist:</p>
-    <div class="whitespace-pre-line">${item.notes || 'None'}</div>
-</div>
-
-
-                                 <!-- Research/MacBook Mode (Visible details and editing inputs) -->
-<div class="hidden md:block mt-3 text-xs">
-    <!-- Top Row: Compact Numeric/Price Inputs -->
-    <div class="grid grid-cols-3 gap-2">
-        <div>
-            <span class="block text-gray-400 uppercase font-semibold">Day 1 Target:</span> 
-            <input type="text" value="${item.buy || ''}" onchange="updateField('${item.id}', 'buy', this.value)" class="border p-1.5 rounded-md w-full bg-brand-bg text-brand-primary font-semibold text-center focus:ring-1 focus:ring-brand-gold">
-        </div>
-        <div>
-            <span class="block text-gray-400 uppercase font-semibold">Resale Est:</span> 
-            <input type="text" value="${item.resale_estimate || ''}" onchange="updateField('${item.id}', 'resale_estimate', this.value)" class="border p-1.5 rounded-md w-full text-brand-primary font-semibold text-center focus:ring-1 focus:ring-brand-gold">
-        </div>
-        <div>
-            <span class="block text-gray-400 uppercase font-semibold">Confidence %:</span> 
-            <input type="number" value="${item.confidence || ''}" onchange="updateField('${item.id}', 'confidence', this.value)" class="border p-1.5 rounded-md w-full text-brand-primary text-center focus:ring-1 focus:ring-brand-gold">
-        </div>
-    </div>
-    <!-- Second Row: Full Width Checklist Notes with Expandable Textarea -->
-    <div class="mt-3">
-        <span class="block text-gray-400 uppercase font-semibold mb-1">Checklist Notes:</span>
-        <textarea onchange="updateField('${item.id}', 'notes', this.value)" class="border p-2 rounded-md w-full text-brand-primary focus:ring-1 focus:ring-brand-gold h-20 resize-y" placeholder="Enter detailed inspection notes here...">${item.notes || ''}</textarea>
-    </div>
-</div>
+                                    
+                                    <!-- Compact Toggle Button -->
+                                    <button onclick="toggleNotes('${item.id}')" id="toggle-btn-${item.id}" class="text-xs text-brand-gold hover:text-brand-primary font-semibold mt-1.5 flex items-center gap-1 bg-amber-50/50 border border-amber-200/60 px-2.5 py-1 rounded-md transition-all">
+                                        ${buttonText}
+                                    </button>
+                                    
+                                    <!-- Field/Mobile Mode (Collapsed details, large text notes) -->
+                                    <div id="mobile-notes-${item.id}" class="${hiddenClass} md:hidden mt-3 text-sm text-gray-700 font-mono bg-brand-bg border border-amber-100 rounded-md p-3">
+                                        <!-- Compact Mobile Metrics Row -->
+                                        <div class="flex justify-between border-b border-amber-200/60 pb-2 mb-2 text-xs font-sans">
+                                            <div>
+                                                <span class="text-gray-500 uppercase font-semibold">Est Resale:</span>
+                                                <span class="text-brand-primary font-bold ml-1">${item.resale_estimate || 'N/A'}</span>
+                                            </div>
+                                            <div>
+                                                <span class="text-gray-500 uppercase font-semibold">Confidence:</span>
+                                                <span class="text-brand-primary font-bold ml-1">${item.confidence || '55'}%</span>
+                                            </div>
+                                        </div>
+                                        
+                                        <p class="font-bold text-amber-800 text-xs uppercase mb-1">Field Checklist:</p>
+                                        <div class="whitespace-pre-line">${item.notes || 'None'}</div>
+                                    </div>
+                                    
+                                    <!-- Research/MacBook Mode (Visible details and editing inputs) -->
+                                    <div class="hidden md:block mt-3 text-xs">
+                                        <!-- Top Row: Compact Numeric/Price Inputs -->
+                                        <div class="grid grid-cols-3 gap-2">
+                                            <div>
+                                                <span class="block text-gray-400 uppercase font-semibold">Day 1 Target:</span> 
+                                                <input type="text" value="${item.buy || ''}" onchange="updateField('${item.id}', 'buy', this.value)" class="border p-1.5 rounded-md w-full bg-brand-bg text-brand-primary font-semibold text-center focus:ring-1 focus:ring-brand-gold">
+                                            </div>
+                                            <div>
+                                                <span class="block text-gray-400 uppercase font-semibold">Resale Est:</span> 
+                                                <input type="text" value="${item.resale_estimate || ''}" onchange="updateField('${item.id}', 'resale_estimate', this.value)" class="border p-1.5 rounded-md w-full text-brand-primary font-semibold text-center focus:ring-1 focus:ring-brand-gold">
+                                            </div>
+                                            <div>
+                                                <span class="block text-gray-400 uppercase font-semibold">Confidence %:</span> 
+                                                <input type="number" value="${item.confidence || ''}" onchange="updateField('${item.id}', 'confidence', this.value)" class="border p-1.5 rounded-md w-full text-brand-primary text-center focus:ring-1 focus:ring-brand-gold">
+                                            </div>
+                                        </div>
+                                        <!-- Second Row: Full Width Checklist Notes with Expandable Textarea -->
+                                        <div id="desktop-notes-${item.id}" class="${hiddenClass} mt-3">
+                                            <span class="block text-gray-400 uppercase font-semibold mb-1">Checklist Notes:</span>
+                                            <textarea onchange="updateField('${item.id}', 'notes', this.value)" class="border p-2 rounded-md w-full text-brand-primary focus:ring-1 focus:ring-brand-gold h-20 resize-y" placeholder="Enter detailed inspection notes here...">${item.notes || ''}</textarea>
+                                        </div>
+                                    </div>
+                                </div>
 
                                 <!-- Action Buttons with One-Tap Paid target functionality! -->
                                 <div class="flex flex-col items-end gap-2 text-sm">
                                     <div class="flex items-center gap-1 font-bold text-brand-gold bg-brand-bg border px-3 py-1.5 rounded-full">
                                         <span>Target:</span> <span class="text-brand-primary">${item.buy}</span>
                                     </div>
-
-                                    <!-- One-Tap Bought Checklist! (Bypasses mobile keyboard completely) -->
+                                    
+                                    <!-- One-Tap Bought Checklist! -->
                                     <div class="flex items-center gap-2 mt-1">
                                         <button onclick="oneTapPay('${item.id}', '${item.buy}')" class="flex items-center gap-1 bg-emerald-50 text-emerald-800 border border-emerald-300 font-bold px-3 py-1.5 rounded-md hover:bg-emerald-100 transition-all text-xs" title="Tap if you paid target price!">
                                             ✅ Buy at Target
@@ -367,7 +381,8 @@
                                 </div>
                             </div>
                         </div>
-                    `).join('');
+                    `;
+                    }).join('');
                 } else {
                     itemsListHTML = `<p class="text-xs text-gray-400 italic py-2">No items processed yet. Click 'Paste From Chat' below and drop Claude's analysis!</p>`;
                 }
