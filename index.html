@@ -273,7 +273,7 @@
             }
         }
 
-      // Heavy DB Aggregator and Dynamic Mobile Responsive Card Renderer
+    // Heavy DB Aggregator and Dynamic Mobile Responsive Card Renderer
         async function loadLots(estateId) {
             const { data: lots, error: lotErr } = await supabase
                 .from('lots')
@@ -325,7 +325,7 @@
                                         </button>
                                     </div>
                                     
-                                    <!-- Field/Mobile Mode (Collapsed details, large text notes) -->
+                                    <!-- Field/Mobile Mode (Interactive check-off list, large text notes) -->
                                     <div id="mobile-notes-${item.id}" class="${hiddenClass} md:hidden mt-3 text-sm text-gray-700 font-mono bg-brand-bg border border-amber-100 rounded-md p-3">
                                         <!-- Compact Mobile Metrics Row -->
                                         <div class="flex justify-between border-b border-amber-200/60 pb-2 mb-2 text-xs font-sans">
@@ -340,10 +340,11 @@
                                         </div>
                                         
                                         <p class="font-bold text-amber-800 text-xs uppercase mb-1">Field Checklist:</p>
-                                        <div class="whitespace-pre-line">${item.notes || 'None'}</div>
+                                        <!-- Render dynamic interactive checklist -->
+                                        ${renderChecklist(item.notes)}
                                     </div>
                                     
-                                    <!-- Research/MacBook Mode (Visible details and editing inputs) -->
+                                    <!-- Research/MacBook Mode (Visible details, editing inputs, and live preview) -->
                                     <div class="hidden md:block mt-3 text-xs">
                                         <!-- Top Row: Compact Numeric/Price Inputs -->
                                         <div class="grid grid-cols-3 gap-2">
@@ -360,10 +361,16 @@
                                                 <input type="number" value="${item.confidence || ''}" onchange="updateField('${item.id}', 'confidence', this.value)" class="border p-1.5 rounded-md w-full text-brand-primary text-center focus:ring-1 focus:ring-brand-gold">
                                             </div>
                                         </div>
-                                        <!-- Second Row: Full Width Checklist Notes with Expandable Textarea -->
-                                        <div id="desktop-notes-${item.id}" class="${hiddenClass} mt-3">
-                                            <span class="block text-gray-400 uppercase font-semibold mb-1">Checklist Notes:</span>
-                                            <textarea onchange="updateField('${item.id}', 'notes', this.value)" class="border p-2 rounded-md w-full text-brand-primary focus:ring-1 focus:ring-brand-gold h-20 resize-y" placeholder="Enter detailed inspection notes here...">${item.notes || ''}</textarea>
+                                        <!-- Second Row: Full Width Checklist Notes with Expandable Textarea & Live Checklist -->
+                                        <div id="desktop-notes-${item.id}" class="${hiddenClass} mt-3 grid grid-cols-1 md:grid-cols-2 gap-4">
+                                            <div>
+                                                <span class="block text-gray-400 uppercase font-semibold mb-1">Edit Notes:</span>
+                                                <textarea onchange="updateField('${item.id}', 'notes', this.value)" class="border p-2 rounded-md w-full text-brand-primary focus:ring-1 focus:ring-brand-gold h-28 resize-y" placeholder="Enter detailed inspection notes here...">${item.notes || ''}</textarea>
+                                            </div>
+                                            <div class="bg-amber-50/20 border border-amber-100 rounded-md p-3">
+                                                <span class="block text-amber-800 uppercase font-bold text-[10px] mb-1">Checklist Live Preview:</span>
+                                                ${renderChecklist(item.notes)}
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -485,6 +492,26 @@
                 console.error("Error deleting item:", err);
                 alert("An unexpected error occurred while deleting.");
             }
+        }
+         // Dynamically parses a block of text into interactive checkboxes
+        function renderChecklist(notes) {
+            if (!notes) return '<p class="text-xs text-gray-400 italic">No checklist notes added.</p>';
+            
+            // Split notes by line breaks, bullets, or periods followed by spaces
+            const steps = notes.split(/\n|•|■|(?<=\w\w)\.\s+/).map(step => step.trim()).filter(step => step.length > 0);
+            
+            if (steps.length === 0) return '<p class="text-xs text-gray-400 italic">No checklist notes added.</p>';
+            
+            return `
+            <div class="space-y-1.5 mt-2">
+                ${steps.map((step, idx) => `
+                    <label class="flex items-start gap-2.5 py-1 px-1.5 rounded hover:bg-amber-50/40 transition-colors cursor-pointer group">
+                        <input type="checkbox" class="mt-0.5 h-4 w-4 rounded border-amber-300 text-brand-gold focus:ring-brand-gold accent-amber-600 cursor-pointer" onchange="this.nextElementSibling.classList.toggle('line-through', this.checked); this.nextElementSibling.classList.toggle('text-gray-400', this.checked); this.nextElementSibling.classList.toggle('italic', this.checked)">
+                        <span class="text-sm text-gray-700 font-mono transition-all group-hover:text-black leading-tight">${step}</span>
+                    </label>
+                `).join('')}
+            </div>
+            `;
         }
         // Robust JSON Clipboard Parser: Turns Claude's unstructured prompt data into aligned Postgres rows
         async function triggerPaste(lotId) {
