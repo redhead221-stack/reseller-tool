@@ -273,7 +273,7 @@
             }
         }
 
-        // Heavy DB Aggregator and Dynamic Mobile Responsive Card Renderer
+       // Heavy DB Aggregator and Dynamic Mobile Responsive Card Renderer
         async function loadLots(estateId) {
             const { data: lots, error: lotErr } = await supabase
                 .from('lots')
@@ -298,8 +298,6 @@
                     .order('created_at', { ascending: true });
 
                 let itemsListHTML = '';
-                if (items && items.length > 0) {
-                     let itemsListHTML = '';
                 if (items && items.length > 0) {
                     itemsListHTML = items.map(item => {
                         // Check if this item is currently collapsed
@@ -381,7 +379,7 @@
                                 </div>
                             </div>
                         </div>
-                    `;
+                        `;
                     }).join('');
                 } else {
                     itemsListHTML = `<p class="text-xs text-gray-400 italic py-2">No items processed yet. Click 'Paste From Chat' below and drop Claude's analysis!</p>`;
@@ -398,7 +396,7 @@
 
                         <div class="p-6">
                             <h4 class="text-lg font-bold text-brand-primary border-b pb-2 mb-4">${lot.title}</h4>
-
+                            
                             <!-- Items List -->
                             <div class="space-y-4">
                                 ${itemsListHTML}
@@ -417,6 +415,7 @@
 
             container.innerHTML = lotsHTML;
         }
+
 
         // Inline Field Editor updates DB instantly
         async function updateField(id, field, value) {
