@@ -305,11 +305,24 @@
                                 <div class="flex-1">
                                     <h5 class="font-bold text-brand-primary text-base">${item.name}</h5>
 
-                                    <!-- Field/Mobile Mode (Collapsed details, large text notes) -->
-                                    <div class="md:hidden mt-2 text-sm text-gray-700 font-mono bg-brand-bg border border-amber-100 rounded-md p-3">
-                                        <p class="font-bold text-amber-800 text-xs uppercase mb-1">Field Checklist:</p>
-                                        ${item.notes || 'None'}
-                                    </div>
+                                   <!-- Field/Mobile Mode (Collapsed details, large text notes) -->
+<div class="md:hidden mt-2 text-sm text-gray-700 font-mono bg-brand-bg border border-amber-100 rounded-md p-3">
+    <!-- Compact Mobile Metrics Row -->
+    <div class="flex justify-between border-b border-amber-200/60 pb-2 mb-2 text-xs font-sans">
+        <div>
+            <span class="text-gray-500 uppercase font-semibold">Est Resale:</span>
+            <span class="text-brand-primary font-bold ml-1">${item.resale_estimate || 'N/A'}</span>
+        </div>
+        <div>
+            <span class="text-gray-500 uppercase font-semibold">Confidence:</span>
+            <span class="text-brand-primary font-bold ml-1">${item.confidence || '55'}%</span>
+        </div>
+    </div>
+    
+    <p class="font-bold text-amber-800 text-xs uppercase mb-1">Field Checklist:</p>
+    <div class="whitespace-pre-line">${item.notes || 'None'}</div>
+</div>
+
 
                                  <!-- Research/MacBook Mode (Visible details and editing inputs) -->
 <div class="hidden md:block mt-3 text-xs">
