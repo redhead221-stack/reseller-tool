@@ -301,7 +301,7 @@
                 if (items && items.length > 0) {
                     itemsListHTML = items.map(item => {
                         // Check if this item is currently collapsed
-                        const isCollapsed = collapsedNotesState[item.id] === true;
+                        const isCollapsed = collapsedNotesState[item.id] === false;
                         const hiddenClass = isCollapsed ? 'hidden' : '';
                         const buttonText = isCollapsed ? '👁️ Show' : '🙈 Hide';
                         
@@ -455,7 +455,8 @@
 // Toggle notes open or collapsed dynamically
         function toggleNotes(itemId) {
             // Flip the collapsed state
-            collapsedNotesState[itemId] = !collapsedNotesState[itemId];
+            const currentState = collapsedNotesState[itemId] !== false;
+collapsedNotesState[itemId] = !currentState;
             
             const mobileNotes = document.getElementById(`mobile-notes-${itemId}`);
             const desktopNotes = document.getElementById(`desktop-notes-${itemId}`);
