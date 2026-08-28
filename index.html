@@ -273,7 +273,7 @@
             }
         }
 
-    // Heavy DB Aggregator and Dynamic Mobile Responsive Card Renderer
+   // Heavy DB Aggregator and Dynamic Mobile Responsive Card Renderer
         async function loadLots(estateId) {
             const { data: lots, error: lotErr } = await supabase
                 .from('lots')
@@ -308,8 +308,9 @@
                         return `
                         <!-- Item Card with Double Responsive Layouts! -->
                         <div class="border-b last:border-b-0 pb-4 mb-4 last:mb-0 last:pb-0" id="item-card-${item.id}">
-                            <div class="flex justify-between items-start gap-4">
-                                <div class="flex-1">
+                            <!-- Responsive outer wrapper: stacks vertically on mobile, side-by-side on desktop -->
+                            <div class="flex flex-col md:flex-row justify-between items-stretch md:items-start gap-4">
+                                <div class="flex-1 w-full">
                                     <div class="flex items-center gap-2 flex-wrap">
                                         <h5 class="font-bold text-brand-primary text-base">${item.name}</h5>
                                         ${item.ai_model ? `<span class="text-[10px] bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full font-sans font-semibold border">🤖 ${item.ai_model}</span>` : ''}
@@ -325,8 +326,8 @@
                                         </button>
                                     </div>
                                     
-                                    <!-- Field/Mobile Mode (Interactive check-off list, large text notes) -->
-                                    <div id="mobile-notes-${item.id}" class="${hiddenClass} md:hidden mt-3 text-sm text-gray-700 font-mono bg-brand-bg border border-amber-100 rounded-md p-3">
+                                    <!-- Field/Mobile Mode (Interactive check-off list, stretches full-width!) -->
+                                    <div id="mobile-notes-${item.id}" class="${hiddenClass} md:hidden mt-3 text-sm text-gray-700 font-mono bg-brand-bg border border-amber-100 rounded-md p-3 w-full">
                                         <!-- Compact Mobile Metrics Row -->
                                         <div class="flex justify-between border-b border-amber-200/60 pb-2 mb-2 text-xs font-sans">
                                             <div>
@@ -340,11 +341,11 @@
                                         </div>
                                         
                                         <p class="font-bold text-amber-800 text-xs uppercase mb-1">Field Checklist:</p>
-                                        <!-- Render dynamic interactive checklist -->
+                                        <!-- Checklist stretches across full phone width -->
                                         ${renderChecklist(item.notes)}
                                     </div>
                                     
-                                    <!-- Research/MacBook Mode (Visible details, editing inputs, and live preview) -->
+                                    <!-- Research/MacBook Mode (Visible details and editing inputs) -->
                                     <div class="hidden md:block mt-3 text-xs">
                                         <!-- Top Row: Compact Numeric/Price Inputs -->
                                         <div class="grid grid-cols-3 gap-2">
@@ -361,7 +362,7 @@
                                                 <input type="number" value="${item.confidence || ''}" onchange="updateField('${item.id}', 'confidence', this.value)" class="border p-1.5 rounded-md w-full text-brand-primary text-center focus:ring-1 focus:ring-brand-gold">
                                             </div>
                                         </div>
-                                        <!-- Second Row: Full Width Checklist Notes with Expandable Textarea & Live Checklist -->
+                                        <!-- Second Row: Full Width Checklist Notes with Expandable Textarea -->
                                         <div id="desktop-notes-${item.id}" class="${hiddenClass} mt-3 grid grid-cols-1 md:grid-cols-2 gap-4">
                                             <div>
                                                 <span class="block text-gray-400 uppercase font-semibold mb-1">Edit Notes:</span>
@@ -375,14 +376,14 @@
                                     </div>
                                 </div>
 
-                                <!-- Action Buttons with One-Tap Paid target functionality! -->
-                                <div class="flex flex-col items-end gap-2 text-sm">
+                                <!-- Action Buttons: Stacks cleanly below the checklist on mobile, column on desktop -->
+                                <div class="flex flex-row md:flex-col justify-between md:items-end items-center gap-2 text-sm border-t border-dashed border-gray-100 md:border-t-0 pt-3 md:pt-0 mt-2 md:mt-0 w-full md:w-auto">
                                     <div class="flex items-center gap-1 font-bold text-brand-gold bg-brand-bg border px-3 py-1.5 rounded-full">
                                         <span>Target:</span> <span class="text-brand-primary">${item.buy}</span>
                                     </div>
                                     
                                     <!-- One-Tap Bought Checklist! -->
-                                    <div class="flex items-center gap-2 mt-1">
+                                    <div class="flex items-center gap-2">
                                         <button onclick="oneTapPay('${item.id}', '${item.buy}')" class="flex items-center gap-1 bg-emerald-50 text-emerald-800 border border-emerald-300 font-bold px-3 py-1.5 rounded-md hover:bg-emerald-100 transition-all text-xs" title="Tap if you paid target price!">
                                             ✅ Buy at Target
                                         </button>
@@ -430,6 +431,7 @@
 
             container.innerHTML = lotsHTML;
         }
+
 
 
         // Inline Field Editor updates DB instantly
