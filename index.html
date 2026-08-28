@@ -495,12 +495,12 @@
                 alert("An unexpected error occurred while deleting.");
             }
         }
-         // Dynamically parses a block of text into interactive checkboxes
+    // Dynamically parses a block of text into interactive checkboxes
         function renderChecklist(notes) {
             if (!notes) return '<p class="text-xs text-gray-400 italic">No checklist notes added.</p>';
             
-            // Split notes by line breaks, bullets, or periods followed by spaces
-            const steps = notes.split(/\n|•|■|(?<=\w\w)\.\s+/).map(step => step.trim()).filter(step => step.length > 0);
+            // Split notes by line breaks, bullets, standard sentence periods, or numbered list markers (e.g. 1. or 2))
+            const steps = notes.split(/\n|•|■|(?<=\w\w)\.\s+|\b\d+[\.)]\s+/).map(step => step.trim()).filter(step => step.length > 0);
             
             if (steps.length === 0) return '<p class="text-xs text-gray-400 italic">No checklist notes added.</p>';
             
@@ -514,8 +514,7 @@
                 `).join('')}
             </div>
             `;
-        }
-        // Robust JSON Clipboard Parser: Turns Claude's unstructured prompt data into aligned Postgres rows
+        }     // Robust JSON Clipboard Parser: Turns Claude's unstructured prompt data into aligned Postgres rows
         async function triggerPaste(lotId) {
             try {
                 const text = await navigator.clipboard.readText();
