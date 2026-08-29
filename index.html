@@ -387,15 +387,17 @@
                                 ${renderChecklist(item.notes)}
                             </div>
 
-                            <!-- Research/MacBook Mode (Checklist Edit & Live Preview) -->
-                            <div id="desktop-notes-${item.id}" class="${displayGridClass} mt-2 grid-cols-1 lg:grid-cols-2 gap-4">
-                                <div>
-                                    <span class="block text-gray-400 uppercase font-bold text-[10px] mb-1">Edit Notes:</span>
-                                    <textarea onchange="updateField('${item.id}', 'notes', this.value)" class="border p-2 rounded-md w-full text-brand-primary focus:ring-1 focus:ring-brand-gold h-28 resize-y" placeholder="Enter detailed inspection notes here...">${item.notes || ''}</textarea>
-                                </div>
-                                <div class="bg-amber-50/20 border border-amber-100 rounded-md p-3">
-                                    <span class="block text-amber-800 uppercase font-bold text-[10px] mb-1">Checklist Live Preview:</span>
-                                    ${renderChecklist(item.notes)}
+                            <!-- Research/MacBook Mode (Checklist Edit & Live Preview Wrapped safely!) -->
+                            <div class="hidden lg:block">
+                                <div id="desktop-notes-${item.id}" class="${displayGridClass} mt-2 grid-cols-1 lg:grid-cols-2 gap-4">
+                                    <div>
+                                        <span class="block text-gray-400 uppercase font-bold text-[10px] mb-1">Edit Notes:</span>
+                                        <textarea onchange="updateField('${item.id}', 'notes', this.value)" class="border p-2 rounded-md w-full text-brand-primary focus:ring-1 focus:ring-brand-gold h-28 resize-y" placeholder="Enter detailed inspection notes here...">${item.notes || ''}</textarea>
+                                    </div>
+                                    <div class="bg-amber-50/20 border border-amber-100 rounded-md p-3">
+                                        <span class="block text-amber-800 uppercase font-bold text-[10px] mb-1">Checklist Live Preview:</span>
+                                        ${renderChecklist(item.notes)}
+                                    </div>
                                 </div>
                             </div>
                         </div>
