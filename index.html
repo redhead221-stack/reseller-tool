@@ -275,7 +275,7 @@
             }
         }
 
-   // Heavy DB Aggregator and Dynamic Mobile Responsive Card Renderer
+           // Heavy DB Aggregator and Dynamic Mobile Responsive Card Renderer
         async function loadLots(estateId) {
             const { data: lots, error: lotErr } = await supabase
                 .from('lots')
@@ -303,8 +303,9 @@
                 if (items && items.length > 0) {
                     itemsListHTML = items.map(item => {
                         // Check if this item is currently collapsed
-                        const isCollapsed = collapsedNotesState[item.id] === false;
-                        const hiddenClass = isCollapsed ? 'hidden' : '';
+                        const isCollapsed = collapsedNotesState[item.id] !== false;
+                        const displayClass = isCollapsed ? 'hidden' : 'block';
+                        const displayGridClass = isCollapsed ? 'hidden' : 'grid';
                         const buttonText = isCollapsed ? '👁️ Show' : '🙈 Hide';
                         
                         return `
@@ -329,7 +330,7 @@
                                     </div>
                                     
                                     <!-- Field/Mobile Mode (Interactive check-off list, stretches full-width!) -->
-                                    <div id="mobile-notes-${item.id}" class="${hiddenClass} md:hidden mt-3 text-sm text-gray-700 font-mono bg-brand-bg border border-amber-100 rounded-md p-3 w-full">
+                                    <div id="mobile-notes-${item.id}" class="${displayClass} md:hidden mt-3 text-sm text-gray-700 font-mono bg-brand-bg border border-amber-100 rounded-md p-3 w-full">
                                         <!-- Compact Mobile Metrics Row -->
                                         <div class="flex justify-between border-b border-amber-200/60 pb-2 mb-2 text-xs font-sans">
                                             <div>
@@ -365,7 +366,7 @@
                                             </div>
                                         </div>
                                         <!-- Second Row: Full Width Checklist Notes with Expandable Textarea -->
-                                        <div id="desktop-notes-${item.id}" class="${hiddenClass} mt-3 grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div id="desktop-notes-${item.id}" class="${displayGridClass} mt-3 grid-cols-1 md:grid-cols-2 gap-4">
                                             <div>
                                                 <span class="block text-gray-400 uppercase font-semibold mb-1">Edit Notes:</span>
                                                 <textarea onchange="updateField('${item.id}', 'notes', this.value)" class="border p-2 rounded-md w-full text-brand-primary focus:ring-1 focus:ring-brand-gold h-28 resize-y" placeholder="Enter detailed inspection notes here...">${item.notes || ''}</textarea>
@@ -435,7 +436,6 @@
         }
 
 
-
         // Inline Field Editor updates DB instantly
         async function updateField(id, field, value) {
             const updateObj = {};
@@ -458,22 +458,33 @@
         function toggleNotes(itemId) {
             // Flip the collapsed state
             const currentState = collapsedNotesState[itemId] !== false;
-collapsedNotesState[itemId] = !currentState;
+            collapsedNotesState[itemId] = !currentState;
             
             const mobileNotes = document.getElementById(`mobile-notes-${itemId}`);
             const desktopNotes = document.getElementById(`desktop-notes-${itemId}`);
             const btn = document.getElementById(`toggle-btn-${itemId}`);
             
             if (collapsedNotesState[itemId]) {
-                if (mobileNotes) mobileNotes.classList.add('hidden');
-                if (desktopNotes) desktopNotes.classList.add('hidden');
+                if (mobileNotes) {
+                    mobileNotes.classList.add('hidden');
+                }
+                if (desktopNotes) {
+                    desktopNotes.classList.add('hidden');
+                    desktopNotes.classList.remove('grid');
+                }
                 if (btn) btn.innerHTML = '👁️ Show Checklist';
             } else {
-                if (mobileNotes) mobileNotes.classList.remove('hidden');
-                if (desktopNotes) desktopNotes.classList.remove('hidden');
+                if (mobileNotes) {
+                    mobileNotes.classList.remove('hidden');
+                }
+                if (desktopNotes) {
+                    desktopNotes.classList.remove('hidden');
+                    desktopNotes.classList.add('grid');
+                }
                 if (btn) btn.innerHTML = '🙈 Hide Checklist';
             }
         }
+
         // Delete an item from Supabase with instant UI sync
         async function deleteItem(itemId, itemName) {
             // Native mobile safety confirmation prompt
