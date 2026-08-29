@@ -275,7 +275,7 @@
             }
         }
 
-          // Heavy DB Aggregator and Dynamic Mobile Responsive Card Renderer
+         // Heavy DB Aggregator and Dynamic Mobile Responsive Card Renderer
         async function loadLots(estateId) {
             const { data: lots, error: lotErr } = await supabase
                 .from('lots')
@@ -388,7 +388,7 @@
                             </div>
 
                             <!-- Research/MacBook Mode (Checklist Edit & Live Preview) -->
-                            <div id="desktop-notes-${item.id}" class="${displayGridClass} hidden md:grid mt-2 grid-cols-1 md:grid-cols-2 gap-4">
+                            <div id="desktop-notes-${item.id}" class="${displayGridClass} mt-2 grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
                                     <span class="block text-gray-400 uppercase font-bold text-[10px] mb-1">Edit Notes:</span>
                                     <textarea onchange="updateField('${item.id}', 'notes', this.value)" class="border p-2 rounded-md w-full text-brand-primary focus:ring-1 focus:ring-brand-gold h-28 resize-y" placeholder="Enter detailed inspection notes here...">${item.notes || ''}</textarea>
@@ -435,7 +435,6 @@
 
             container.innerHTML = lotsHTML;
         }
-
 
 
 
