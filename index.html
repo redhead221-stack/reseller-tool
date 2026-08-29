@@ -331,18 +331,6 @@
                                     
                                     <!-- Field/Mobile Mode (Interactive check-off list, stretches full-width!) -->
                                     <div id="mobile-notes-${item.id}" class="${displayClass} md:hidden mt-3 text-sm text-gray-700 font-mono bg-brand-bg border border-amber-100 rounded-md p-3 w-full">
-                                        <!-- Compact Mobile Metrics Row -->
-                                        <div class="flex justify-between border-b border-amber-200/60 pb-2 mb-2 text-xs font-sans">
-                                            <div>
-                                                <span class="text-gray-500 uppercase font-semibold">Est Resale:</span>
-                                                <span class="text-brand-primary font-bold ml-1">${item.resale_estimate || 'N/A'}</span>
-                                            </div>
-                                            <div>
-                                                <span class="text-gray-500 uppercase font-semibold">Confidence:</span>
-                                                <span class="text-brand-primary font-bold ml-1">${item.confidence || '55'}%</span>
-                                            </div>
-                                        </div>
-                                        
                                         <p class="font-bold text-amber-800 text-xs uppercase mb-1">Field Checklist:</p>
                                         <!-- Checklist stretches across full phone width -->
                                         ${renderChecklist(item.notes)}
@@ -381,8 +369,17 @@
 
                                 <!-- Action Buttons: Stacks cleanly below the checklist on mobile, column on desktop -->
                                 <div class="flex flex-row md:flex-col justify-between md:items-end items-center gap-2 text-sm border-t border-dashed border-gray-100 md:border-t-0 pt-3 md:pt-0 mt-2 md:mt-0 w-full md:w-auto">
-                                    <div class="flex items-center gap-1 font-bold text-brand-gold bg-brand-bg border px-3 py-1.5 rounded-full">
-                                        <span>Target:</span> <span class="text-brand-primary">${item.buy}</span>
+                                    <!-- Target Badge & Always-Visible Metrics Column -->
+                                    <div class="flex flex-col items-start md:items-end gap-1">
+                                        <div class="flex items-center gap-1 font-bold text-brand-gold bg-brand-bg border px-3 py-1.5 rounded-full">
+                                            <span>Target:</span> <span class="text-brand-primary">${item.buy}</span>
+                                        </div>
+                                        <!-- Always-visible Est Resale & Confidence Stacked Below -->
+                                        <div class="text-[11px] text-gray-500 font-sans flex items-center gap-1.5 mt-0.5">
+                                            <span>Est: <strong class="text-brand-primary font-semibold">${item.resale_estimate || 'N/A'}</strong></span>
+                                            <span class="text-gray-300">•</span>
+                                            <span>Conf: <strong class="text-brand-primary font-semibold">${item.confidence || '55'}%</strong></span>
+                                        </div>
                                     </div>
                                     
                                     <!-- One-Tap Bought Checklist! -->
@@ -434,6 +431,7 @@
 
             container.innerHTML = lotsHTML;
         }
+
 
 
         // Inline Field Editor updates DB instantly
