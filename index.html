@@ -311,13 +311,13 @@
                         <!-- Item Card -->
                         <div class="border-b last:border-b-0 pb-6 mb-6 last:mb-0 last:pb-0" id="item-card-${item.id}">
                             <!-- 1. FULL WIDTH TITLE HEADER -->
-                            <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 mb-3">
+                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-3">
                                 <div class="flex items-center gap-2 flex-wrap min-w-0">
-                                    <h5 class="font-bold text-brand-primary text-base md:text-lg leading-tight min-w-0 break-words">${item.name}</h5>
+                                    <h5 class="font-bold text-brand-primary text-base sm:text-lg leading-tight min-w-0 break-words">${item.name}</h5>
                                     ${item.ai_model ? `<span class="text-[10px] bg-gray-100 text-gray-600 px-2.5 py-0.5 rounded-full font-sans font-semibold border shrink-0">🤖 ${item.ai_model}</span>` : ''}
                                 </div>
                                 <!-- Top Right Target Badge -->
-                                <div class="flex items-center gap-1.5 font-bold text-brand-gold bg-brand-bg border border-amber-200/50 px-3.5 py-1.5 rounded-full text-xs md:text-sm shadow-sm shrink-0 self-start md:self-auto">
+                                <div class="flex items-center gap-1.5 font-bold text-brand-gold bg-brand-bg border border-amber-200/50 px-3.5 py-1.5 rounded-full text-xs sm:text-sm shadow-sm shrink-0 self-start sm:self-auto">
                                     <span>Target:</span> <span class="text-brand-primary">${item.buy || '$0'}</span>
                                 </div>
                             </div>
@@ -342,7 +342,7 @@
 
                             <!-- 3. DETAILED ACTION & INPUTS AREA -->
                             <!-- Mobile Inputs and Actions Stacking (Visible on Phone only, hidden on Tablet/Desktop) -->
-                            <div class="md:hidden space-y-3 mb-4">
+                            <div class="sm:hidden space-y-3 mb-4">
                                 <div class="flex items-center gap-2 bg-emerald-50/50 border border-emerald-100 p-2.5 rounded-lg">
                                     <button onclick="oneTapPay('${item.id}', '${item.buy}')" class="flex-1 flex items-center justify-center gap-1 bg-emerald-600 text-white font-bold py-2 rounded-md hover:bg-emerald-700 transition-all text-xs">
                                         ✅ Buy at Target
@@ -355,7 +355,7 @@
                             </div>
 
                             <!-- Desktop/Tablet Metrics Inputs & Actions Row (Visible on iPad and MacBook) -->
-                            <div class="hidden md:grid grid-cols-1 md:grid-cols-4 gap-4 items-end border-b border-dashed border-gray-100 pb-4 mb-4">
+                            <div class="hidden sm:grid grid-cols-1 sm:grid-cols-4 gap-4 items-end border-b border-dashed border-gray-100 pb-4 mb-4">
                                 <div>
                                     <span class="block text-gray-400 uppercase font-bold text-[10px] mb-1">Day 1 Target:</span> 
                                     <input type="text" value="${item.buy || ''}" onchange="updateField('${item.id}', 'buy', this.value)" class="border p-2 rounded-md w-full bg-brand-bg text-brand-primary font-semibold text-center focus:ring-1 focus:ring-brand-gold">
@@ -381,17 +381,17 @@
 
                             <!-- 4. UNIFIED DYNAMIC NOTES CONTAINER -->
                             <div id="notes-container-${item.id}" class="${displayClass} mt-3">
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                     <!-- Column 1: Edit Notes Textarea (Visible on Tablet/Desktop, hidden on Phone) -->
-                                    <div class="hidden md:block">
+                                    <div class="hidden sm:block">
                                         <span class="block text-gray-400 uppercase font-bold text-[10px] mb-1">Edit Notes:</span>
                                         <textarea onchange="updateField('${item.id}', 'notes', this.value)" class="border p-2 rounded-md w-full text-brand-primary focus:ring-1 focus:ring-brand-gold h-28 resize-y" placeholder="Enter detailed inspection notes here...">${item.notes || ''}</textarea>
                                     </div>
                                     
                                     <!-- Column 2 / Mobile View: Single Checklist Container (Adapts title responsively) -->
                                     <div class="bg-amber-50/20 border border-amber-100 rounded-md p-3">
-                                        <span class="block text-amber-800 uppercase font-bold text-[10px] mb-1 hidden md:block">Checklist Live Preview:</span>
-                                        <span class="block text-amber-800 uppercase font-bold text-[10px] mb-1 md:hidden">Field Checklist:</span>
+                                        <span class="block text-amber-800 uppercase font-bold text-[10px] mb-1 hidden sm:block">Checklist Live Preview:</span>
+                                        <span class="block text-amber-800 uppercase font-bold text-[10px] mb-1 sm:hidden">Field Checklist:</span>
                                         ${renderChecklist(item.notes)}
                                     </div>
                                 </div>
@@ -433,7 +433,6 @@
 
             container.innerHTML = lotsHTML;
         }
-
 
 
         // Inline Field Editor updates DB instantly
