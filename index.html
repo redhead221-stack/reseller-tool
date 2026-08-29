@@ -27,11 +27,13 @@
 </head>
 <body class="bg-brand-bg text-brand-primary min-h-screen font-sans pb-24">
 
-    <!-- Connection Config (NOVICALS ONLY - EXTREMELY EASY) -->
+   <!-- Connection Config (NOVICALS ONLY - EXTREMELY EASY) -->
     <script>
-      const SUPABASE_URL = "https://htsaxsszyokkxzmzkmes.supabase.co";
-        const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh0c2F4c3N6eW9ra3h6bXprbWVzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc3NjU2NjgsImV4cCI6MjEwMzM0MTY2OH0.3QxSaYrzMXLoZjBjg2RZKWHMlj3JH7GLs-l7vYUCC-A"; // (Your full key here)
-        supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        const SUPABASE_URL = "https://htsaxsszyokkxzmzkmes.supabase.co";
+        const SUPABASE_KEY = "ey..."; // Keep your actual long anon key here
+        
+        // Fix: Reassign the global instead of redeclaring 'const supabase'
+        supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
     </script>
 
     <!-- Top Navigation Header -->
@@ -116,7 +118,7 @@
     <script>
         let currentEstateId = null;
         let selectedFile = null;
-         let collapsedNotesState = {};
+           const collapsedNotesState = {};
 
         // On Load: Read data from cache first, then sync from Supabase
         window.addEventListener('DOMContentLoaded', async () => {
