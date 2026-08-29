@@ -275,7 +275,7 @@
             }
         }
 
-           // Heavy DB Aggregator and Dynamic Mobile Responsive Card Renderer
+          // Heavy DB Aggregator and Dynamic Mobile Responsive Card Renderer
         async function loadLots(estateId) {
             const { data: lots, error: lotErr } = await supabase
                 .from('lots')
@@ -309,89 +309,93 @@
                         const buttonText = isCollapsed ? '👁️ Show' : '🙈 Hide';
                         
                         return `
-                        <!-- Item Card with Double Responsive Layouts! -->
-                        <div class="border-b last:border-b-0 pb-4 mb-4 last:mb-0 last:pb-0" id="item-card-${item.id}">
-                            <!-- Responsive outer wrapper: stacks vertically on mobile, side-by-side on desktop -->
-                            <div class="flex flex-col md:flex-row justify-between items-stretch md:items-start gap-4">
-                                <div class="flex-1 w-full">
-                                    <div class="flex items-center gap-2 flex-wrap">
-                                        <h5 class="font-bold text-brand-primary text-base">${item.name}</h5>
-                                        ${item.ai_model ? `<span class="text-[10px] bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full font-sans font-semibold border">🤖 ${item.ai_model}</span>` : ''}
-                                    </div>
-                                    
-                                    <!-- Compact Toggle & Delete Buttons Row -->
-                                    <div class="flex items-center gap-2 mt-1.5">
-                                        <button onclick="toggleNotes('${item.id}')" id="toggle-btn-${item.id}" class="text-xs text-brand-gold hover:text-brand-primary font-semibold flex items-center gap-1 bg-amber-50/50 border border-amber-200/60 px-2.5 py-1 rounded-md transition-all">
-                                            ${buttonText} Checklist
-                                        </button>
-                                        <button onclick="deleteItem('${item.id}', '${item.name.replace(/'/g, "\\'")}')" class="text-xs text-red-600 hover:bg-red-50 hover:text-red-800 font-semibold flex items-center gap-1 bg-red-50/40 border border-red-200/40 px-2.5 py-1 rounded-md transition-all">
-                                            🗑️ Delete
-                                        </button>
-                                    </div>
-                                    
-                                    <!-- Field/Mobile Mode (Interactive check-off list, stretches full-width!) -->
-                                    <div id="mobile-notes-${item.id}" class="${displayClass} md:hidden mt-3 text-sm text-gray-700 font-mono bg-brand-bg border border-amber-100 rounded-md p-3 w-full">
-                                        <p class="font-bold text-amber-800 text-xs uppercase mb-1">Field Checklist:</p>
-                                        <!-- Checklist stretches across full phone width -->
-                                        ${renderChecklist(item.notes)}
-                                    </div>
-                                    
-                                    <!-- Research/MacBook Mode (Visible details and editing inputs) -->
-                                    <div class="hidden md:block mt-3 text-xs">
-                                        <!-- Top Row: Compact Numeric/Price Inputs -->
-                                        <div class="grid grid-cols-3 gap-2">
-                                            <div>
-                                                <span class="block text-gray-400 uppercase font-semibold">Day 1 Target:</span> 
-                                                <input type="text" value="${item.buy || ''}" onchange="updateField('${item.id}', 'buy', this.value)" class="border p-1.5 rounded-md w-full bg-brand-bg text-brand-primary font-semibold text-center focus:ring-1 focus:ring-brand-gold">
-                                            </div>
-                                            <div>
-                                                <span class="block text-gray-400 uppercase font-semibold">Resale Est:</span> 
-                                                <input type="text" value="${item.resale_estimate || ''}" onchange="updateField('${item.id}', 'resale_estimate', this.value)" class="border p-1.5 rounded-md w-full text-brand-primary font-semibold text-center focus:ring-1 focus:ring-brand-gold">
-                                            </div>
-                                            <div>
-                                                <span class="block text-gray-400 uppercase font-semibold">Confidence %:</span> 
-                                                <input type="number" value="${item.confidence || ''}" onchange="updateField('${item.id}', 'confidence', this.value)" class="border p-1.5 rounded-md w-full text-brand-primary text-center focus:ring-1 focus:ring-brand-gold">
-                                            </div>
-                                        </div>
-                                        <!-- Second Row: Full Width Checklist Notes with Expandable Textarea -->
-                                        <div id="desktop-notes-${item.id}" class="${displayGridClass} mt-3 grid-cols-1 md:grid-cols-2 gap-4">
-                                            <div>
-                                                <span class="block text-gray-400 uppercase font-semibold mb-1">Edit Notes:</span>
-                                                <textarea onchange="updateField('${item.id}', 'notes', this.value)" class="border p-2 rounded-md w-full text-brand-primary focus:ring-1 focus:ring-brand-gold h-28 resize-y" placeholder="Enter detailed inspection notes here...">${item.notes || ''}</textarea>
-                                            </div>
-                                            <div class="bg-amber-50/20 border border-amber-100 rounded-md p-3">
-                                                <span class="block text-amber-800 uppercase font-bold text-[10px] mb-1">Checklist Live Preview:</span>
-                                                ${renderChecklist(item.notes)}
-                                            </div>
-                                        </div>
+                        <!-- Item Card -->
+                        <div class="border-b last:border-b-0 pb-6 mb-6 last:mb-0 last:pb-0" id="item-card-${item.id}">
+                            <!-- 1. FULL WIDTH TITLE HEADER -->
+                            <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 mb-3">
+                                <div class="flex items-center gap-2 flex-wrap min-w-0">
+                                    <h5 class="font-bold text-brand-primary text-base md:text-lg leading-tight min-w-0 break-words">${item.name}</h5>
+                                    ${item.ai_model ? `<span class="text-[10px] bg-gray-100 text-gray-600 px-2.5 py-0.5 rounded-full font-sans font-semibold border shrink-0">🤖 ${item.ai_model}</span>` : ''}
+                                </div>
+                                <!-- Top Right Target Badge -->
+                                <div class="flex items-center gap-1.5 font-bold text-brand-gold bg-brand-bg border border-amber-200/50 px-3.5 py-1.5 rounded-full text-xs md:text-sm shadow-sm shrink-0 self-start md:self-auto">
+                                    <span>Target:</span> <span class="text-brand-primary">${item.buy || '$0'}</span>
+                                </div>
+                            </div>
+
+                            <!-- 2. METADATA ROW & TOGGLES (Always Visible) -->
+                            <div class="flex flex-wrap items-center justify-between gap-3 bg-gray-50/50 p-2.5 rounded-lg border border-gray-100 mb-4">
+                                <div class="flex items-center gap-2">
+                                    <button onclick="toggleNotes('${item.id}')" id="toggle-btn-${item.id}" class="text-xs text-brand-gold hover:text-brand-primary font-bold flex items-center gap-1.5 bg-white border border-amber-200/60 px-3 py-1.5 rounded-md shadow-sm transition-all">
+                                        ${buttonText} Checklist
+                                    </button>
+                                    <button onclick="deleteItem('${item.id}', '${item.name.replace(/'/g, "\\'")}')" class="text-xs text-red-600 hover:bg-red-50 hover:text-red-800 font-bold flex items-center gap-1.5 bg-white border border-red-200/40 px-3 py-1.5 rounded-md shadow-sm transition-all">
+                                        🗑️ Delete
+                                    </button>
+                                </div>
+                                <!-- Always Visible Est Resale & Confidence -->
+                                <div class="text-xs text-gray-500 font-sans flex items-center gap-2">
+                                    <span>Est Resale: <strong class="text-brand-primary font-bold">${item.resale_estimate || 'N/A'}</strong></span>
+                                    <span class="text-gray-300">|</span>
+                                    <span>Confidence: <strong class="text-brand-primary font-bold">${item.confidence || '55'}%</strong></span>
+                                </div>
+                            </div>
+
+                            <!-- 3. DETAILED ACTION & INPUTS AREA -->
+                            <!-- Mobile Inputs and Actions Stacking (Visible on Mobile only) -->
+                            <div class="md:hidden space-y-3 mb-4">
+                                <div class="flex items-center gap-2 bg-emerald-50/50 border border-emerald-100 p-2.5 rounded-lg">
+                                    <button onclick="oneTapPay('${item.id}', '${item.buy}')" class="flex-1 flex items-center justify-center gap-1 bg-emerald-600 text-white font-bold py-2 rounded-md hover:bg-emerald-700 transition-all text-xs">
+                                        ✅ Buy at Target
+                                    </button>
+                                    <div class="flex items-center gap-1.5 shrink-0">
+                                        <span class="text-xs text-emerald-800 font-bold uppercase">Paid:</span>
+                                        <input type="text" id="paid-mobile-${item.id}" value="${item.paid || '0.00'}" onchange="updateField('${item.id}', 'paid', this.value)" class="border border-emerald-200 p-1.5 rounded-md w-24 text-center font-bold text-emerald-700 bg-white text-xs">
                                     </div>
                                 </div>
+                            </div>
 
-                                <!-- Action Buttons: Stacks cleanly below the checklist on mobile, column on desktop -->
-                                <div class="flex flex-row md:flex-col justify-between md:items-end items-center gap-2 text-sm border-t border-dashed border-gray-100 md:border-t-0 pt-3 md:pt-0 mt-2 md:mt-0 w-full md:w-auto">
-                                    <!-- Target Badge & Always-Visible Metrics Column -->
-                                    <div class="flex flex-col items-start md:items-end gap-1">
-                                        <div class="flex items-center gap-1 font-bold text-brand-gold bg-brand-bg border px-3 py-1.5 rounded-full">
-                                            <span>Target:</span> <span class="text-brand-primary">${item.buy}</span>
-                                        </div>
-                                        <!-- Always-visible Est Resale & Confidence Stacked Below -->
-                                        <div class="text-[11px] text-gray-500 font-sans flex items-center gap-1.5 mt-0.5">
-                                            <span>Est: <strong class="text-brand-primary font-semibold">${item.resale_estimate || 'N/A'}</strong></span>
-                                            <span class="text-gray-300">•</span>
-                                            <span>Conf: <strong class="text-brand-primary font-semibold">${item.confidence || '55'}%</strong></span>
-                                        </div>
+                            <!-- Desktop (MacBook) Metrics Inputs & Actions Row (Visible on Desktop only) -->
+                            <div class="hidden md:grid grid-cols-1 md:grid-cols-4 gap-4 items-end border-b border-dashed border-gray-100 pb-4 mb-4">
+                                <div>
+                                    <span class="block text-gray-400 uppercase font-bold text-[10px] mb-1">Day 1 Target:</span> 
+                                    <input type="text" value="${item.buy || ''}" onchange="updateField('${item.id}', 'buy', this.value)" class="border p-2 rounded-md w-full bg-brand-bg text-brand-primary font-semibold text-center focus:ring-1 focus:ring-brand-gold">
+                                </div>
+                                <div>
+                                    <span class="block text-gray-400 uppercase font-bold text-[10px] mb-1">Resale Est:</span> 
+                                    <input type="text" value="${item.resale_estimate || ''}" onchange="updateField('${item.id}', 'resale_estimate', this.value)" class="border p-2 rounded-md w-full text-brand-primary font-semibold text-center focus:ring-1 focus:ring-brand-gold">
+                                </div>
+                                <div>
+                                    <span class="block text-gray-400 uppercase font-bold text-[10px] mb-1">Confidence %:</span> 
+                                    <input type="number" value="${item.confidence || ''}" onchange="updateField('${item.id}', 'confidence', this.value)" class="border p-2 rounded-md w-full text-brand-primary text-center focus:ring-1 focus:ring-brand-gold">
+                                </div>
+                                <div class="flex items-center gap-2 justify-end">
+                                    <button onclick="oneTapPay('${item.id}', '${item.buy}')" class="flex items-center gap-1 bg-emerald-50 text-emerald-800 border border-emerald-300 font-bold px-3 py-2.5 rounded-md hover:bg-emerald-100 transition-all text-xs shrink-0" title="Tap if you paid target price!">
+                                        ✅ Buy at Target
+                                    </button>
+                                    <div class="flex flex-col shrink-0">
+                                        <span class="text-[9px] text-gray-400 uppercase font-bold mb-1">Paid:</span>
+                                        <input type="text" id="paid-desktop-${item.id}" value="${item.paid || '0.00'}" onchange="updateField('${item.id}', 'paid', this.value)" class="border p-2 rounded-md w-24 text-center font-bold text-emerald-700 bg-white text-xs">
                                     </div>
-                                    
-                                    <!-- One-Tap Bought Checklist! -->
-                                    <div class="flex items-center gap-2">
-                                        <button onclick="oneTapPay('${item.id}', '${item.buy}')" class="flex items-center gap-1 bg-emerald-50 text-emerald-800 border border-emerald-300 font-bold px-3 py-1.5 rounded-md hover:bg-emerald-100 transition-all text-xs" title="Tap if you paid target price!">
-                                            ✅ Buy at Target
-                                        </button>
-                                        <div class="flex items-center gap-1">
-                                            <span class="text-xs text-gray-400 uppercase font-semibold">Paid:</span>
-                                            <input type="text" id="paid-${item.id}" value="${item.paid || '0.00'}" onchange="updateField('${item.id}', 'paid', this.value)" class="border p-1.5 rounded-md w-20 text-center font-bold text-emerald-700 bg-white text-xs">
-                                        </div>
-                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 4. CHECKLIST AREA (Toggled) -->
+                            <!-- Field/Mobile Mode (Checklist only) -->
+                            <div id="mobile-notes-${item.id}" class="${displayClass} md:hidden mt-2 text-sm text-gray-700 font-mono bg-brand-bg border border-amber-100 rounded-md p-3 w-full">
+                                <p class="font-bold text-amber-800 text-xs uppercase mb-1">Field Checklist:</p>
+                                ${renderChecklist(item.notes)}
+                            </div>
+
+                            <!-- Research/MacBook Mode (Checklist Edit & Live Preview) -->
+                            <div id="desktop-notes-${item.id}" class="${displayGridClass} hidden md:grid mt-2 grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <span class="block text-gray-400 uppercase font-bold text-[10px] mb-1">Edit Notes:</span>
+                                    <textarea onchange="updateField('${item.id}', 'notes', this.value)" class="border p-2 rounded-md w-full text-brand-primary focus:ring-1 focus:ring-brand-gold h-28 resize-y" placeholder="Enter detailed inspection notes here...">${item.notes || ''}</textarea>
+                                </div>
+                                <div class="bg-amber-50/20 border border-amber-100 rounded-md p-3">
+                                    <span class="block text-amber-800 uppercase font-bold text-[10px] mb-1">Checklist Live Preview:</span>
+                                    ${renderChecklist(item.notes)}
                                 </div>
                             </div>
                         </div>
@@ -434,6 +438,7 @@
 
 
 
+
         // Inline Field Editor updates DB instantly
         async function updateField(id, field, value) {
             const updateObj = {};
@@ -446,12 +451,22 @@
             if (error) console.error(error);
         }
 
-        // One-Tap Bought Engine (No keyboard needed in the field!)
-        async function oneTapPay(id, rawTarget) {
-            const numericValue = rawTarget.replace(/[^0-9.]/g, ''); // Strips any dollar signs or extra text
-            document.getElementById(`paid-${id}`).value = numericValue;
-            await updateField(id, 'paid', numericValue);
+     // Quick one-tap checkout syncing both layout modes
+        async function oneTapPay(itemId, buyPrice) {
+            // Strip dollar signs and formatting
+            const parsedPrice = buyPrice ? buyPrice.replace(/[^0-9.]/g, '') : "0.00";
+            
+            // Instantly sync visual fields
+            const mobileInput = document.getElementById(`paid-mobile-${itemId}`);
+            const desktopInput = document.getElementById(`paid-desktop-${itemId}`);
+            
+            if (mobileInput) mobileInput.value = parsedPrice;
+            if (desktopInput) desktopInput.value = parsedPrice;
+
+            // Direct cloud save
+            await updateField(itemId, 'paid', parsedPrice);
         }
+
 // Toggle notes open or collapsed dynamically
         function toggleNotes(itemId) {
             // Flip the collapsed state
